@@ -39,7 +39,7 @@ jobs:
       - name: Deploy Lambda Function
         env:
           FUNCTION_NAME: inspect_point_ai_dataintegration
-          IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/inspect_point_ai_dataintegration:${{ github.sha }}
+          IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/testing_repo:${{ github.sha }}
           AWS_REGION: eu-north-1
         run: |1
           echo "Retrieving AWS Account ID..."
