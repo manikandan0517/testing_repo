@@ -68,7 +68,7 @@ jobs:
       - name: Add S3 Trigger
         env:
           FUNCTION_NAME: inspect_point_ai_dataintegration
-          S3_BUCKET_NAME: deficiency-reports
+          S3_BUCKET_NAME: deficiency-reports-1
           S3_EVENT_SUFFIX: .pdf
           AWS_REGION: eu-north-1
         run: |
