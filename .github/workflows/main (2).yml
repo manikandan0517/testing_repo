@@ -17,7 +17,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.IAM_ROLE }}
-          aws-region: ap-southeast-1
+          aws-region: eu-north-1
           role-session-name: GitHubActionsSession
 
 
@@ -28,7 +28,7 @@ jobs:
       - name: Build, Tag, and Push Docker Image
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: inspect_point_ai_dataintegration
+          REPOSITORY: testing_repo
           IMAGE_TAG: ${{ github.sha }}
         run: |
           echo "Building Docker image..."
@@ -40,8 +40,8 @@ jobs:
         env:
           FUNCTION_NAME: inspect_point_ai_dataintegration
           IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/inspect_point_ai_dataintegration:${{ github.sha }}
-          AWS_REGION: ap-southeast-1
-        run: |
+          AWS_REGION: eu-north-1
+        run: |1
           echo "Retrieving AWS Account ID..."
           ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
           echo "AWS Account ID: $ACCOUNT_ID"
@@ -56,7 +56,7 @@ jobs:
             echo "Function does not exist. Creating..."
             aws lambda create-function \
               --function-name $FUNCTION_NAME \
-              --role arn:aws:iam::$ACCOUNT_ID:role/Deployment \
+              --role arn:aws:iam::$ACCOUNT_ID:role/GitHubActionsDeploymentRole \
               --package-type Image \
               --code ImageUri=$IMAGE_URI \
               --environment Variables="{OPENAI_API_KEY=placeholder,MODEL=placeholder,POSTGRES_DATABASE=placeholder,POSTGRES_HOST=placeholder,POSTGRES_PORT=placeholder,POSTGRES_USER=placeholder,POSTGRES_PASSWORD=placeholder,AWS_STORAGE_BUCKET_NAME=placeholder,AWS_S3_REGION_NAME=placeholder,AWS_ACCESS_KEY_ID_=placeholder,AWS_SECRET_ACCESS_KEY_=placeholder}" \
@@ -70,7 +70,7 @@ jobs:
           FUNCTION_NAME: inspect_point_ai_dataintegration
           S3_BUCKET_NAME: deficiency-reports
           S3_EVENT_SUFFIX: .pdf
-          AWS_REGION: ap-southeast-1
+          AWS_REGION: eu-north-1
         run: |
           echo "Granting S3 permission to invoke the Lambda function..."
           ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
